@@ -1,0 +1,110 @@
+# My Job Hunt — how to use this app
+
+This is an AI job-application system. The agent reads a job posting, checks honestly
+whether you qualify, and if so writes a tailored, ATS-ready CV and cover letter.
+It never invents facts: everything comes from one file, the **master profile**.
+
+Your facts live in `.claude/skills/master-profile/SKILL.md`. That file is the single
+source of truth. Every CV, cover letter and eligibility verdict is built from it.
+
+---
+
+## STEP 1 — Set up your profile (do this once)
+
+Paste this as your first message to the agent:
+
+> Update my profile. Read inputs/old-cv.pdf and use master-profile-builder to fill the
+> master-profile skill with everything in it, then ask me about every TODO that's left.
+
+What happens:
+- It imports your old CV automatically.
+- It then interviews you in short rounds (max 5 questions at a time) to fill the gaps.
+- Answer honestly: surname, contact details, work authorization, languages, exact job
+  titles and dates, employment type per role (full-time / internship / freelance /
+  end-of-study), and real numbers (users, endpoints, hours saved, etc.).
+
+Why this matters: every future CV is only as good as this profile. Missing or wrong
+facts here show up in every document later. Never let it guess — if you don't know a
+number, tell it "no metric available" rather than letting it invent one.
+
+---
+
+## STEP 2 — Apply to a job (one line per job)
+
+> Full pack for https://link-to-the-job
+
+That runs the whole pipeline: fetch the posting, assess eligibility, then (if you
+qualify) tailor and build the CV, cover letter, DOCX and PDF. Everything is saved in
+`jobs/<company-role-date>/`.
+
+---
+
+## Other commands you can say
+
+| Say this | What it does |
+|---|---|
+| `Assess only <link>` | Only tells you if you're qualified. No documents. |
+| `CV for <link>` | Builds the CV but skips the cover letter. |
+| `Override, apply anyway <link>` | Forces an application even if the verdict is Not qualified (output is labelled STRETCH/UNQUALIFIED so it stays honest). |
+| `Optimize my LinkedIn` | Runs the LinkedIn profile optimizer. |
+| `Update my profile` | Runs master-profile-builder again when you gain new skills, jobs or projects. |
+
+---
+
+## What the verdicts mean
+
+The eligibility assessor gives one of four verdicts before writing anything:
+
+- **STRONG FIT / QUALIFIED** — it continues automatically.
+- **STRETCH** — odds are low; it tells you what's missing and continues only if you say
+  "apply anyway" or "override".
+- **NOT QUALIFIED** — it stops, explains the 1–3 blockers, tells you how to become
+  qualified, and suggests better-fit searches. It will offer:
+  "Say 'override' if you want me to write the most honest version anyway."
+
+Honesty beats score. If a job needs Go and PostgreSQL and your profile has neither, it
+says so and does not write a CV unless you override.
+
+---
+
+## If the agent can't open a job link
+
+LinkedIn and some job boards block automated fetching. When that happens the agent will
+ask you to **paste the job description text**. Paste it and the same pipeline continues
+(it just skips the fetch step).
+
+---
+
+## Rules the system follows (so you can trust the output)
+
+1. **Never fabricate** experience, skills, dates, degrees, metrics or links.
+2. **Honesty beats optimization** — a lower ATS score with true content is the correct result.
+3. **No silent overrides** — a "Not qualified" verdict is never ignored without your say-so.
+4. **One job at a time**, each in its own folder under `jobs/`.
+5. **Privacy** — never stores IDs, passwords, exact home address or date of birth.
+
+---
+
+## What lands in each job folder
+
+After a Full pack, `jobs/<company-role-date>/` contains:
+
+- `job.md` — the parsed posting and its requirements
+- `eligibility.md` — the verdict, score and gaps
+- `tailoring-plan.md` — what to emphasize for this job
+- `cv.md` — the CV source text
+- `<...>_CV.docx` and `<...>_CV.pdf` — the CV to submit
+- `<...>_CoverLetter.docx` and `<...>_CoverLetter.pdf` — the cover letter
+- `ats-report.md` — the ATS audit (must reach 85+ to pass)
+
+**Which file to upload:** the **PDF** unless the portal asks for Word/DOCX.
+
+---
+
+## Tips
+
+- Keep the master profile current. When you finish a project, say "Update my profile"
+  and give it the new facts and numbers.
+- Numbers make a big difference. Even proxies help: number of endpoints, screens,
+  collections, skills, users, events.
+- Treat STRETCH jobs as long shots and spend most effort on QUALIFIED and STRONG FIT ones.
