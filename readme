@@ -1,110 +1,160 @@
-# My Job Hunt — how to use this app
+<div align="center">
 
-This is an AI job-application system. The agent reads a job posting, checks honestly
-whether you qualify, and if so writes a tailored, ATS-ready CV and cover letter.
-It never invents facts: everything comes from one file, the **master profile**.
+# 🎯 My Job Hunt
 
-Your facts live in `.claude/skills/master-profile/SKILL.md`. That file is the single
-source of truth. Every CV, cover letter and eligibility verdict is built from it.
+### Paste a job link. Get a tailored, ATS-ready CV, or an honest "not qualified".
+
+![Skills](https://img.shields.io/badge/skills-14-1F3A5F?style=for-the-badge)
+![ATS pass mark](https://img.shields.io/badge/ATS%20pass%20mark-85%2B-2E7D32?style=for-the-badge)
+![Honesty](https://img.shields.io/badge/never%20invents%20facts-100%25-B71C1C?style=for-the-badge)
+
+</div>
 
 ---
 
-## STEP 1 — Set up your profile (do this once)
+## ✨ What it does
+
+An AI job-application system for your agent. It reads a job posting, **checks honestly whether you qualify**, and if you do, writes a **tailored CV and cover letter** that pass applicant tracking systems.
+
+> 🔒 **It never invents anything.** Every fact comes from one file: your **master profile** at
+> `.claude/skills/master-profile/SKILL.md`. Every CV, cover letter and verdict is built from it.
+
+```
+  🔗 Job link ──► 📄 Parse ──► ⚖️ Eligibility ──┬──► ✅ Qualified ──► 🧩 Tailor ──► ✍️ Write
+                                               │                                     │
+                                               │                                     ▼
+                                               │                              🤖 ATS audit (85+)
+                                               │                                     │
+                                               └──► ❌ Not qualified                 ▼
+                                                    (honest reasons,          🎨 Format ──► 📦 CV + Letter
+                                                     no documents)               DOCX + PDF
+```
+
+---
+
+## 🚀 Quick start
+
+### Step 1: Set up your profile (once)
 
 Paste this as your first message to the agent:
 
-> Update my profile. Read inputs/old-cv.pdf and use master-profile-builder to fill the
-> master-profile skill with everything in it, then ask me about every TODO that's left.
+> **Update my profile.** Read `inputs/old-cv.pdf` and use `master-profile-builder` to fill the master-profile skill with everything in it, then ask me about every TODO that's left.
 
-What happens:
-- It imports your old CV automatically.
-- It then interviews you in short rounds (max 5 questions at a time) to fill the gaps.
-- Answer honestly: surname, contact details, work authorization, languages, exact job
-  titles and dates, employment type per role (full-time / internship / freelance /
-  end-of-study), and real numbers (users, endpoints, hours saved, etc.).
+**What happens**
 
-Why this matters: every future CV is only as good as this profile. Missing or wrong
-facts here show up in every document later. Never let it guess — if you don't know a
-number, tell it "no metric available" rather than letting it invent one.
+- 📥 It imports your old CV automatically.
+- 💬 It interviews you in short rounds (max 5 questions at a time) to fill the gaps.
+- ✅ You answer honestly: work authorization, exact job titles and dates, **employment type per role** (full-time / internship / freelance / end-of-study), and real numbers (users, endpoints, hours saved).
 
----
+> ⚠️ **Why this matters:** every future CV is only as good as this profile. Wrong or missing facts show up in every document. If you don't know a number, say **"no metric available"** and never let it guess.
 
-## STEP 2 — Apply to a job (one line per job)
+### Step 2: Apply to a job (one line per job)
 
-> Full pack for https://link-to-the-job
+```text
+Full pack for https://link-to-the-job
+```
 
-That runs the whole pipeline: fetch the posting, assess eligibility, then (if you
-qualify) tailor and build the CV, cover letter, DOCX and PDF. Everything is saved in
-`jobs/<company-role-date>/`.
+It fetches the posting, assesses eligibility and, if you qualify, builds the CV, cover letter, DOCX and PDF. Everything is saved in `jobs/<company-role-date>/`.
 
 ---
 
-## Other commands you can say
+## 🗣️ Commands you can say
 
 | Say this | What it does |
 |---|---|
-| `Assess only <link>` | Only tells you if you're qualified. No documents. |
-| `CV for <link>` | Builds the CV but skips the cover letter. |
-| `Override, apply anyway <link>` | Forces an application even if the verdict is Not qualified (output is labelled STRETCH/UNQUALIFIED so it stays honest). |
-| `Optimize my LinkedIn` | Runs the LinkedIn profile optimizer. |
-| `Update my profile` | Runs master-profile-builder again when you gain new skills, jobs or projects. |
+| `Full pack for <link>` | The whole pipeline: assess, tailor, CV, cover letter, DOCX + PDF |
+| `Assess only <link>` | 🔎 Tells you if you're qualified. No documents. |
+| `CV for <link>` | 📄 Builds the CV, skips the cover letter |
+| `Override, apply anyway <link>` | 🚧 Forces an application despite "Not qualified". Output is labelled STRETCH / UNQUALIFIED so it stays honest |
+| `Optimize my LinkedIn` | 💼 Runs the LinkedIn profile optimizer |
+| `Update my profile` | 🔄 Re-runs the profile builder when you gain new skills, jobs or projects |
 
 ---
 
-## What the verdicts mean
+## ⚖️ What the verdicts mean
 
-The eligibility assessor gives one of four verdicts before writing anything:
+The eligibility assessor scores you out of 100 **before** writing anything.
 
-- **STRONG FIT / QUALIFIED** — it continues automatically.
-- **STRETCH** — odds are low; it tells you what's missing and continues only if you say
-  "apply anyway" or "override".
-- **NOT QUALIFIED** — it stops, explains the 1–3 blockers, tells you how to become
-  qualified, and suggests better-fit searches. It will offer:
-  "Say 'override' if you want me to write the most honest version anyway."
+| Verdict | Score | What happens |
+|---|:---:|---|
+| 🟢 **STRONG FIT** | 80 to 100 | Continues automatically |
+| 🔵 **QUALIFIED** | 65 to 79 | Continues automatically, addresses gaps in the cover letter |
+| 🟡 **STRETCH** | 50 to 64 | Warns about low odds and what's missing. Continues only if you say *"apply anyway"* or *"override"* |
+| 🔴 **NOT QUALIFIED** | below 50, or a knockout requirement fails | Stops. Explains the 1 to 3 blockers, how to become qualified, and suggests better-fit searches |
 
-Honesty beats score. If a job needs Go and PostgreSQL and your profile has neither, it
-says so and does not write a CV unless you override.
+> A knockout requirement (a required country, language, degree, mandatory certification, or far more years than you have) means **NOT QUALIFIED** whatever the score.
 
----
+💡 **Honesty beats score.** If a job needs Go and PostgreSQL and your profile has neither, it says so and writes nothing unless you override.
 
-## If the agent can't open a job link
-
-LinkedIn and some job boards block automated fetching. When that happens the agent will
-ask you to **paste the job description text**. Paste it and the same pipeline continues
-(it just skips the fetch step).
+When it stops, it offers: *"Say 'override' if you want me to write the most honest version anyway."*
 
 ---
 
-## Rules the system follows (so you can trust the output)
+## 📁 What lands in each job folder
+
+After a **Full pack**, `jobs/<company-role-date>/` contains:
+
+| File | Purpose |
+|---|---|
+| `job.md` | The parsed posting and its requirements |
+| `eligibility.md` | Verdict, score and gaps |
+| `tailoring-plan.md` | What to emphasize for this job |
+| `cv.md` | The CV source text |
+| `…_CV.pdf` / `…_CV.docx` | ⭐ The CV to submit |
+| `…_CoverLetter.pdf` / `…_CoverLetter.docx` | The cover letter |
+| `ats-report.md` | ATS audit (must reach **85+** to pass) |
+
+📎 **Which file to upload:** the **PDF**, unless the portal asks for Word / DOCX.
+
+---
+
+## 🧰 The 14 skills
+
+| Skill | Role |
+|---|---|
+| 🎼 `job-application-orchestrator` | Runs the whole pipeline from a job link |
+| 🌐 `web-to-markdown` | Turns a job link into a clean, structured `job.md` |
+| 🧑 `master-profile` | Your verified facts: the only source of truth |
+| 🛠️ `master-profile-builder` | Imports your CV and interviews you to fill gaps |
+| ⚖️ `job-eligibility-assessor` | Honest go / no-go with score and gaps |
+| 🧩 `resume-tailor` | Picks what to emphasize for this job, plus a keyword map |
+| 🧱 `resume-section-builder` | Writes each CV section to a fixed standard |
+| 🔢 `resume-quantifier` | Adds real numbers, never fake ones |
+| ✍️ `resume-build-writer` | Assembles the full CV text |
+| 🤖 `resume-ats-optimizer` | ATS parsing and keyword audit |
+| 🎨 `cv-design` | Layout and typography rules that stay ATS-safe |
+| 📐 `resume-formatter` | Produces the DOCX and PDF |
+| 💌 `cover-letter-generator` | Tailored letter and application answers |
+| 💼 `linkedin-profile-optimizer` | Rewrites your LinkedIn for recruiter search |
+
+---
+
+## 🌐 If the agent can't open a job link
+
+LinkedIn and some job boards block automated fetching. The agent will then ask you to **paste the job description text**. Paste it and the same pipeline continues, skipping only the fetch step.
+
+---
+
+## 🛡️ Rules the system follows
 
 1. **Never fabricate** experience, skills, dates, degrees, metrics or links.
-2. **Honesty beats optimization** — a lower ATS score with true content is the correct result.
-3. **No silent overrides** — a "Not qualified" verdict is never ignored without your say-so.
+2. **Honesty beats optimization.** A lower ATS score with true content is the correct result.
+3. **No silent overrides.** A "Not qualified" verdict is never ignored without your say-so.
 4. **One job at a time**, each in its own folder under `jobs/`.
-5. **Privacy** — never stores IDs, passwords, exact home address or date of birth.
+5. **Privacy.** It never stores IDs, passwords, exact home address or date of birth.
 
 ---
 
-## What lands in each job folder
+## 💡 Tips
 
-After a Full pack, `jobs/<company-role-date>/` contains:
-
-- `job.md` — the parsed posting and its requirements
-- `eligibility.md` — the verdict, score and gaps
-- `tailoring-plan.md` — what to emphasize for this job
-- `cv.md` — the CV source text
-- `<...>_CV.docx` and `<...>_CV.pdf` — the CV to submit
-- `<...>_CoverLetter.docx` and `<...>_CoverLetter.pdf` — the cover letter
-- `ats-report.md` — the ATS audit (must reach 85+ to pass)
-
-**Which file to upload:** the **PDF** unless the portal asks for Word/DOCX.
+- 🔄 **Keep the master profile current.** After you finish a project, say *"Update my profile"* and give it the new facts and numbers.
+- 🔢 **Numbers make a big difference.** Even proxies help: number of endpoints, screens, collections, skills, users, events.
+- 🎯 **Spend your effort wisely.** Treat STRETCH jobs as long shots and focus on QUALIFIED and STRONG FIT ones.
 
 ---
 
-## Tips
+<div align="center">
 
-- Keep the master profile current. When you finish a project, say "Update my profile"
-  and give it the new facts and numbers.
-- Numbers make a big difference. Even proxies help: number of endpoints, screens,
-  collections, skills, users, events.
-- Treat STRETCH jobs as long shots and spend most effort on QUALIFIED and STRONG FIT ones.
+**Built to get you hired honestly.** 🚀
+
+</div>
